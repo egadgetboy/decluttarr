@@ -58,22 +58,23 @@ Both ways are explained below and there's an explanation for the different setti
 2. Use the following as a base for that and tweak the settings to your needs
 
 ```yaml
+services:
 
   decluttarr:
     image: ghcr.io/manimatter/decluttarr:latest
     container_name: decluttarr
+    restart: unless-stopped
     environment:
-      TZ: America/Chicago
+      TZ: Europe/Zurich
       PUID: 1000
       PGID: 1000
-    restart: unless-stopped
 
       ## General
       # TEST_RUN: True
       # SSL_VERIFICATION: False
       LOG_LEVEL: INFO
 
-      ## Features 
+      ## Features
       REMOVE_TIMER: 10
       REMOVE_FAILED: True
       REMOVE_FAILED_IMPORTS: True
@@ -83,13 +84,22 @@ Both ways are explained below and there's an explanation for the different setti
       REMOVE_SLOW: True
       REMOVE_STALLED: True
       REMOVE_UNMONITORED: True
-      RUN_PERIODIC_RESCANS: ' { "SONARR": {"MISSING": true, "CUTOFF_UNMET": true, "MAX_CONCURRENT_SCANS": 3, "MIN_DAYS_BEFORE_RESCAN": 7}, "RADARR": {"MISSING": true, "CUTOFF_UNMET": true, "MAX_CONCURRENT_SCANS": 3, "MIN_DAYS_BEFORE_RESCAN": 7} }'
+      RUN_PERIODIC_RESCANS: '
+          {
+          "SONARR": {"MISSING": true, "CUTOFF_UNMET": true, "MAX_CONCURRENT_SCANS": 3, "MIN_DAYS_BEFORE_RESCAN": 7},
+          "RADARR": {"MISSING": true, "CUTOFF_UNMET": true, "MAX_CONCURRENT_SCANS": 3, "MIN_DAYS_BEFORE_RESCAN": 7}
+          }'
 
       # Feature Settings
       PERMITTED_ATTEMPTS: 3
       NO_STALLED_REMOVAL_QBIT_TAG: Don't Kill
       MIN_DOWNLOAD_SPEED: 100
-      FAILED_IMPORT_MESSAGE_PATTERNS: ' [ "Not a Custom Format upgrade for existing", "Not an upgrade for existing" ]'
+      FAILED_IMPORT_MESSAGE_PATTERNS: '
+          [
+          "Not a Custom Format upgrade for existing",
+          "Not an upgrade for existing"
+          ]'
+      IGNORED_DOWNLOAD_CLIENTS: '["emulerr"]'
 
             ## Radarr
             RADARR_URL: http://radarr:7878
