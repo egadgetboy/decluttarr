@@ -13,16 +13,16 @@ _Like this app? Thanks for giving it a_ ⭐️
 
 ## Overview
 
-Decluttarr keeps the radarr & sonarr & lidarr & readarr & whisparr queue free of stalled / redundant downloads
+Decluttarr keeps the Radarr, Sonarr, Lidarr, Readarr & Whisparr queue free of stalled / redundant downloads
 
 Feature overview:
 
 -   Automatically delete downloads that are stuck downloading metadata (& trigger download from another source)
 -   Automatically delete failed downloads (& trigger download from another source)
--   Automatically delete downloads belonging to radarr/sonarr/etc. items that have been deleted in the meantime ('Orphan downloads')
+-   Automatically delete downloads belonging to Radarr/Sonarr/etc. items that have been deleted in the meantime ('Orphan downloads')
 -   Automatically delete stalled downloads, after they have been found to be stalled multiple times in a row (& trigger download from another source)
 -   Automatically delete slow downloads, after they have been found to be slow multiple times in a row (& trigger download from another source)
--   Automatically delete downloads belonging to radarr/sonarr/etc. items that are unmonitored
+-   Automatically delete downloads belonging to Radarr/Sonarr/etc. items that are unmonitored
 -   Automatically delete downloads that failed importing since they are not a format upgrade (i.e. a better version is already present)
 
 You may run this locally by launching main.py, or by pulling the docker image.
@@ -41,7 +41,7 @@ You can find a sample docker-compose.yml [here](#method-1-docker).
 -   If you use qBittorrent and none of your torrents get removed and the verbose logs tell that all torrents are protected by the NO_STALLED_REMOVAL_QBIT_TAG even if they are not, you may be using a qBittorrent version that has problems with API calls and you may want to consider switching to a different qBit image (see https://github.com/ManiMatter/decluttarr/issues/56)
 -   Currently, “\*Arr” apps are only supported in English. Refer to issue https://github.com/ManiMatter/decluttarr/issues/132 for more details
 -   If you experience yaml issues, please check the closed issues. There are different notations, and it may very well be that the issue you found has already been solved in one of the issues. Once you figured your problem, feel free to post your yaml to help others here: https://github.com/ManiMatter/decluttarr/issues/173
--   declutarr only supports single radarr / sonarr instances. If you have multiple instances of those \*arrs, solution is to run multiple decluclutarrs as well
+-   declutarr only supports single Radarr / Sonarr instances. If you have multiple instances of those \*arrs, solution is to run multiple decluclutarrs as well
 
 ## Getting started
 
@@ -58,48 +58,38 @@ Both ways are explained below and there's an explanation for the different setti
 2. Use the following as a base for that and tweak the settings to your needs
 
 ```yaml
-version: "3.3"
-services:
-    decluttarr:
-        image: ghcr.io/manimatter/decluttarr:latest
-        container_name: decluttarr
-        restart: always
-        environment:
-            TZ: Europe/Zurich
-            PUID: 1000
-            PGID: 1000
 
-            ## General
-            # TEST_RUN: True
-            # SSL_VERIFICATION: False
-            LOG_LEVEL: INFO
+  decluttarr:
+    image: ghcr.io/manimatter/decluttarr:latest
+    container_name: decluttarr
+    environment:
+      TZ: America/Chicago
+      PUID: 1000
+      PGID: 1000
+    restart: unless-stopped
 
-            ## Features
-            REMOVE_TIMER: 10
-            REMOVE_FAILED: True
-            REMOVE_FAILED_IMPORTS: True
-            REMOVE_METADATA_MISSING: True
-            REMOVE_MISSING_FILES: True
-            REMOVE_ORPHANS: True
-            REMOVE_SLOW: True
-            REMOVE_STALLED: True
-            REMOVE_UNMONITORED: True
-            RUN_PERIODIC_RESCANS: '
-                {
-                "SONARR": {"MISSING": true, "CUTOFF_UNMET": true, "MAX_CONCURRENT_SCANS": 3, "MIN_DAYS_BEFORE_RESCAN": 7},
-                "RADARR": {"MISSING": true, "CUTOFF_UNMET": true, "MAX_CONCURRENT_SCANS": 3, "MIN_DAYS_BEFORE_RESCAN": 7}
-                }'
+      ## General
+      # TEST_RUN: True
+      # SSL_VERIFICATION: False
+      LOG_LEVEL: INFO
 
-            # Feature Settings
-            PERMITTED_ATTEMPTS: 3
-            NO_STALLED_REMOVAL_QBIT_TAG: Don't Kill
-            MIN_DOWNLOAD_SPEED: 100
-            FAILED_IMPORT_MESSAGE_PATTERNS: '
-                [
-                "Not a Custom Format upgrade for existing",
-                "Not an upgrade for existing"
-                ]'
-            IGNORED_DOWNLOAD_CLIENTS: ["emulerr"]
+      ## Features 
+      REMOVE_TIMER: 10
+      REMOVE_FAILED: True
+      REMOVE_FAILED_IMPORTS: True
+      REMOVE_METADATA_MISSING: True
+      REMOVE_MISSING_FILES: True
+      REMOVE_ORPHANS: True
+      REMOVE_SLOW: True
+      REMOVE_STALLED: True
+      REMOVE_UNMONITORED: True
+      RUN_PERIODIC_RESCANS: ' { "SONARR": {"MISSING": true, "CUTOFF_UNMET": true, "MAX_CONCURRENT_SCANS": 3, "MIN_DAYS_BEFORE_RESCAN": 7}, "RADARR": {"MISSING": true, "CUTOFF_UNMET": true, "MAX_CONCURRENT_SCANS": 3, "MIN_DAYS_BEFORE_RESCAN": 7} }'
+
+      # Feature Settings
+      PERMITTED_ATTEMPTS: 3
+      NO_STALLED_REMOVAL_QBIT_TAG: Don't Kill
+      MIN_DOWNLOAD_SPEED: 100
+      FAILED_IMPORT_MESSAGE_PATTERNS: ' [ "Not a Custom Format upgrade for existing", "Not an upgrade for existing" ]'
 
             ## Radarr
             RADARR_URL: http://radarr:7878
